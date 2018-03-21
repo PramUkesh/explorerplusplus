@@ -594,8 +594,6 @@ void Explorerplusplus::OnDirChanged(int iTabId)
 		m_CurrentDirectory);
 	SetCurrentDirectory(m_CurrentDirectory);
 
-	HandleDirectoryMonitoring(iTabId);
-
 	UpdateArrangeMenuItems();
 
 	m_nSelected = 0;
@@ -710,45 +708,6 @@ void Explorerplusplus::OnChangeCBChain(WPARAM wParam,LPARAM lParam)
 		m_hNextClipboardViewer = (HWND)lParam;
 	else if(m_hNextClipboardViewer != NULL)
 		SendMessage(m_hNextClipboardViewer,WM_CHANGECBCHAIN,wParam,lParam);
-}
-
-void Explorerplusplus::HandleDirectoryMonitoring(int iTabId)
-{
-	DirectoryAltered_t	*pDirectoryAltered = NULL;
-	TCHAR				szDirectoryToWatch[MAX_PATH];
-	int					iDirMonitorId;
-
-	iDirMonitorId		= m_pShellBrowser[iTabId]->GetDirMonitorId();
-			
-	/* Stop monitoring the directory that was browsed from. */
-	m_pDirMon->StopDirectoryMonitor(iDirMonitorId);
-
-	m_pShellBrowser[iTabId]->QueryCurrentDirectory(SIZEOF_ARRAY(szDirectoryToWatch),
-		szDirectoryToWatch);
-
-	/* Don't watch virtual folders (the 'recycle bin' may be an
-	exception to this). */
-	if(m_pShellBrowser[iTabId]->InVirtualFolder())
-	{
-		iDirMonitorId = -1;
-	}
-	else
-	{
-		pDirectoryAltered = (DirectoryAltered_t *)malloc(sizeof(DirectoryAltered_t));
-
-		pDirectoryAltered->iIndex		= iTabId;
-		pDirectoryAltered->iFolderIndex	= m_pShellBrowser[iTabId]->GetFolderIndex();
-		pDirectoryAltered->pData		= this;
-
-		/* Start monitoring the directory that was opened. */
-		LOG(debug) << _T("Starting directory monitoring for \"") << szDirectoryToWatch << _T("\"");
-		iDirMonitorId = m_pDirMon->WatchDirectory(szDirectoryToWatch,FILE_NOTIFY_CHANGE_FILE_NAME|
-			FILE_NOTIFY_CHANGE_SIZE|FILE_NOTIFY_CHANGE_DIR_NAME|FILE_NOTIFY_CHANGE_ATTRIBUTES|
-			FILE_NOTIFY_CHANGE_LAST_WRITE|FILE_NOTIFY_CHANGE_LAST_ACCESS|FILE_NOTIFY_CHANGE_CREATION|
-			FILE_NOTIFY_CHANGE_SECURITY,DirectoryAlteredCallback,FALSE,(void *)pDirectoryAltered);
-	}
-
-	m_pShellBrowser[iTabId]->SetDirMonitorId(iDirMonitorId);
 }
 
 void Explorerplusplus::OnTbnDropDown(LPARAM lParam)
