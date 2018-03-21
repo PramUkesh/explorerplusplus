@@ -178,6 +178,7 @@
     <ClCompile Include="iFolderView.cpp" />
     <ClCompile Include="iPathManager.cpp" />
     <ClCompile Include="iShellBrowser.cpp" />
+    <ClCompile Include="ListView.cpp" />
     <ClCompile Include="SortManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
