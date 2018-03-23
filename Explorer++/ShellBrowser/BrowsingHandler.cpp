@@ -94,8 +94,6 @@ HRESULT CShellBrowser::BrowseFolder(LPCITEMIDLIST pidlDirectory,UINT wFlags)
 
 	BrowseVirtualFolder(pidl);
 
-	CoTaskMemFree(pidl);
-
 	/* Stop the list view from redrawing itself each time is inserted.
 	Redrawing will be allowed once all items have being inserted.
 	(reduces lag when a large number of items are going to be inserted). */
@@ -127,7 +125,9 @@ HRESULT CShellBrowser::BrowseFolder(LPCITEMIDLIST pidlDirectory,UINT wFlags)
 
 	SetCursor(LoadCursor(NULL,IDC_ARROW));
 
-	StartDirectoryMonitoring(pidlDirectory);
+	StartDirectoryMonitoring(pidl);
+
+	CoTaskMemFree(pidl);
 
 	m_iUniqueFolderIndex++;
 
